@@ -63,3 +63,42 @@ Inspect image: `docker inspect secret1`
 ...
 ```
 In this way, the secret is out of version control but still is clearly visible for image user as well as on inspecting.
+
+## Way 3(Passing build time argument and using inside context)
+The process is similar to way2 using build arg but we don't define global `ENV`
+```Dockerfile
+# Dockerfile.3
+FROM alpine:3.12
+ARG SECRET
+RUN export MY_SECRET=$SECRET && echo $MY_SECRET > /secret
+CMD tail -f /dev/null
+```
+Build the docker: `docker build -t secret3 . -f Dockerfile.3 --build-arg SECRET=superSecret`
+
+And explore:
+`docker run -it secret2 /bin/sh`
+```
+/ # env
+....
+HOSTNAME=1a1b7e44b0a9
+SHLVL=1
+HOME=/root
+TERM=xterm
+PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+PWD=/
+```
+There is no secret but we used the secret. We can even write the secret to file by following way:
+```
+# Dockerfile.3.1
+RUN export MY_SECRET=$SECRET && echo $MY_SECRET > /secret && **DO SOME TASK** && rm /secret
+```
+
+If you want to remove secret after some task within the same `RUN` context better to do like:
+```
+# Dockerfile.3.2
+RUN export MY_SECRET=$SECRET && echo $MY_SECRET > /secret && unset MY_SECRET && **DO SOME TASK** && rm /secret && **DO SOME TASK**
+```
+
+But let's inspect the image
+`docker inspect secret3`
+There is not secret !

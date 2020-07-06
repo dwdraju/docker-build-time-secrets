@@ -1,0 +1,8 @@
+# Dockerfile.3.1
+FROM alpine:3.12
+ARG SECRET
+RUN export MY_SECRET=$SECRET && \
+	echo $MY_SECRET>/secret && \
+	whoami && \
+	rm /secret
+CMD tail -f /dev/null
