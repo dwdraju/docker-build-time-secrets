@@ -1,3 +1,4 @@
 FROM alpine:3.12
-ENV MY_SECRET superSecret
+ARG SECRET
+ENV MY_SECRET $SECRET
 CMD tail -f /dev/null
