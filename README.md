@@ -76,18 +76,17 @@ CMD tail -f /dev/null
 Build the docker: `docker build -t secret3 . -f Dockerfile.3 --build-arg SECRET=superSecret`
 
 And explore:
-`docker run -it secret2 /bin/sh`
+`docker run -it secret3 /bin/sh`
 ```
 / # env
 ....
-HOSTNAME=1a1b7e44b0a9
-SHLVL=1
 HOME=/root
 TERM=xterm
 PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 PWD=/
 ```
-There is no secret but we used the secret. We can even write the secret to file by following way:
+There is no secret but can use the secret within the `RUN` context.
+The secret can also be written to file by following way:
 ```
 # Dockerfile.3.1
 RUN export MY_SECRET=$SECRET && echo $MY_SECRET > /secret && **DO SOME TASK** && rm /secret
@@ -100,5 +99,7 @@ RUN export MY_SECRET=$SECRET && echo $MY_SECRET > /secret && unset MY_SECRET && 
 ```
 
 But let's inspect the image
+
 `docker inspect secret3`
+
 There is not secret !
